@@ -191,6 +191,8 @@ app.put("/:id", validator(noteSchema), requestErrorHandler(updateANote));
  * @openapi
  * /notes/{id}:
  *  delete:
+ *    tags:
+ *      - "Delete a note with the given id"
  *    description: This route is used to delete note with the given id
  *    paramters:
  *      - name: id
