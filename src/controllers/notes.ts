@@ -1,10 +1,18 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import prisma from "../utils/prisma";
 import { successHandler } from "../utils/Response";
 import { ResourceNotFoundError } from "../utils/Errors/Errors";
 
 const getAllNotes = async (req: Request, res: Response) => {
-  const notes = await prisma.notes.findMany();
+  const { limit, page } = req.query;
+
+  let notes = [];
+  if (limit && page) {
+    notes = await prisma.notes.findMany({
+      skip: +limit * (+page - 1),
+      take: +limit,
+    });
+  } else notes = await prisma.notes.findMany();
 
   successHandler(res, notes);
 };
