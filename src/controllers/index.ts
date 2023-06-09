@@ -9,7 +9,7 @@ const helloWord = (req: Request, res: Response) => {
 
 const notFound = (req: Request, res: Response) => {
   // but later use this to throw error
-  res.json({
+  res.status(404).json({
     msg: "Not found",
     status: "FAILURE",
   });
