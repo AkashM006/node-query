@@ -1,4 +1,5 @@
 import { z } from "zod";
+import * as yup from "yup";
 
 // const userRegistrationSchema = z.object({
 //   name: z
@@ -29,18 +30,31 @@ import { z } from "zod";
 //     ),
 // });
 
-const noteSchema = z.object({
-  title: z
-    .string({
-      required_error: "Title of the note is required",
-    })
-    .min(4, "Title of the note should be atleast 4 characters long")
-    .trim(),
-  body: z
-    .string({
-      required_error: "Body of the note is required",
-    })
-    .min(5, "Body of the note should be atleast 5 characters long"),
+// const noteSchema = z.object({
+//   title: z
+//     .string({
+//       required_error: "Title of the note is required",
+//     })
+//     .min(4, "Title of the note should be atleast 4 characters long")
+//     .trim(),
+//   body: z
+//     .string({
+//       required_error: "Body of the note is required",
+//     })
+//     .min(5, "Body of the note should be atleast 5 characters long"),
+// });
+
+const noteSchema = yup.object({
+  title: yup
+    .string()
+    .required("Title of the note is required")
+    .trim()
+    .min(4, "Title of the note must be atleast 4 characters long"),
+  body: yup
+    .string()
+    .required("Body of the note is required")
+    .trim()
+    .min(5, "Body of the note must be atleast 5 characters long"),
 });
 
 export { noteSchema };
