@@ -2,6 +2,11 @@ import { NextFunction, Request, RequestHandler, Response } from "express";
 import logger from "../logger";
 import * as yup from "yup";
 
+type ErrorObject = {
+  message: string;
+  path: string;
+};
+
 const validator =
   (schema: yup.Schema): RequestHandler =>
   async (req: Request, res: Response, next: NextFunction) => {
@@ -13,10 +18,17 @@ const validator =
       next();
     } catch (error) {
       if (error instanceof yup.ValidationError) {
-        let result = error.inner.map((item) => ({
-          path: item.path,
-          message: item.message,
-        }));
+        let result: ErrorObject[] = [];
+        let paths: string[] = [];
+
+        error.inner.forEach((item) => {
+          if (!item.path || paths.includes(item.path)) return;
+
+          result.push({
+            path: item.path,
+            message: item.message,
+          });
+        });
 
         return res.status(422).json({
           status: "FAILED",
