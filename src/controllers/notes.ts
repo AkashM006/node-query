@@ -7,14 +7,26 @@ const getAllNotes = async (req: Request, res: Response) => {
   const { limit, page } = req.query;
 
   let notes = [];
+  let count = 0;
   if (limit && page) {
-    notes = await prisma.notes.findMany({
-      skip: +limit * (+page - 1),
-      take: +limit,
-    });
-  } else notes = await prisma.notes.findMany();
+    [count, notes] = await prisma.$transaction([
+      prisma.notes.count(),
+      prisma.notes.findMany({
+        skip: +limit * (+page - 1),
+        take: +limit,
+      }),
+    ]);
+  } else
+    [count, notes] = await prisma.$transaction([
+      prisma.notes.count(),
+      prisma.notes.findMany(),
+    ]);
 
-  successHandler(res, notes);
+  let result = {
+    count,
+    data: notes,
+  };
+  successHandler(res, result);
 };
 
 const getOneNote = async (req: Request, res: Response) => {
@@ -93,4 +105,17 @@ const deleteANote = async (req: Request, res: Response) => {
   successHandler(res, null);
 };
 
-export { getAllNotes, getOneNote, createANote, updateANote, deleteANote };
+const removeAll = async (req: Request, res: Response) => {
+  await prisma.notes.deleteMany();
+
+  successHandler(res, "Successfully deleted all notes");
+};
+
+export {
+  getAllNotes,
+  getOneNote,
+  createANote,
+  updateANote,
+  deleteANote,
+  removeAll,
+};

@@ -4,6 +4,7 @@ import {
   deleteANote,
   getAllNotes,
   getOneNote,
+  removeAll,
   updateANote,
 } from "../controllers/notes";
 import { requestErrorHandler } from "../utils/Errors/ErrorHandler";
@@ -186,6 +187,8 @@ app.post("/", validator(noteSchema), requestErrorHandler(createANote));
  */
 
 app.put("/:id", validator(noteSchema), requestErrorHandler(updateANote));
+
+app.delete("/all", requestErrorHandler(removeAll));
 
 /**
  * @openapi
